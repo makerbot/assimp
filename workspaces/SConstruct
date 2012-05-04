@@ -1,0 +1,73 @@
+import commands
+
+env = Environment()
+
+print "building assimp"
+
+CPPATH = '../code/'
+
+assimp_cc = [CPPATH + 'BaseImporter.cpp',
+             CPPATH + '3DSConverter.cpp',CPPATH +'MD2Loader.cpp',
+             CPPATH + '3DSLoader.cpp',CPPATH +'MD3Loader.cpp',
+CPPATH + 'ACLoader.cpp',CPPATH +'MD5Loader.cpp',
+CPPATH + 'ASELoader.cpp',CPPATH +'MD5Parser.cpp',
+CPPATH + 'ASEParser.cpp',CPPATH +'MDCLoader.cpp',
+CPPATH + 'AssimpCExport.cpp',CPPATH +'MDLLoader.cpp',
+CPPATH + 'Assimp.cpp',CPPATH +'MDLMaterialLoader.cpp',
+CPPATH + 'AssimpPCH.cpp',CPPATH +'MS3DLoader.cpp',
+CPPATH + 'B3DImporter.cpp',CPPATH +'NDOLoader.cpp',
+CPPATH + 'BaseImporter.cpp',CPPATH +'NFFLoader.cpp',
+CPPATH + 'BaseProcess.cpp',CPPATH +'ObjExporter.cpp',
+CPPATH + 'BlenderDNA.cpp',CPPATH +'ObjFileImporter.cpp',
+CPPATH + 'BlenderLoader.cpp',CPPATH +'ObjFileMtlImporter.cpp',
+CPPATH + 'BlenderModifier.cpp',CPPATH +'ObjFileParser.cpp',
+CPPATH + 'BlenderScene.cpp',CPPATH +'OFFLoader.cpp',
+CPPATH + 'BVHLoader.cpp',CPPATH +'OgreImporter.cpp',
+CPPATH + 'CalcTangentsProcess.cpp',CPPATH +'OgreMaterial.cpp',
+CPPATH + 'COBLoader.cpp',CPPATH +'OgreMesh.cpp',
+CPPATH + 'ColladaExporter.cpp',CPPATH +'OgreSkeleton.cpp',
+CPPATH + 'ColladaLoader.cpp',CPPATH +'OptimizeGraph.cpp',
+CPPATH + 'ColladaParser.cpp',CPPATH +'OptimizeMeshes.cpp',
+CPPATH + 'ComputeUVMappingProcess.cpp',CPPATH +'PlyExporter.cpp',
+CPPATH + 'ConvertToLHProcess.cpp',CPPATH +'PlyLoader.cpp',
+CPPATH + 'CSMLoader.cpp',CPPATH +'PlyParser.cpp',
+CPPATH + 'DeboneProcess.cpp',CPPATH +'PostStepRegistry.cpp',
+CPPATH + 'DefaultIOStream.cpp',CPPATH +'PretransformVertices.cpp',
+CPPATH + 'DefaultIOSystem.cpp',CPPATH +'ProcessHelper.cpp',
+CPPATH + 'DefaultLogger.cpp',CPPATH +'Q3BSPFileImporter.cpp',
+CPPATH + 'DXFLoader.cpp',CPPATH +'Q3BSPFileParser.cpp',
+CPPATH + 'Exporter.cpp',CPPATH +'Q3BSPZipArchive.cpp',
+CPPATH + 'FindDegenerates.cpp',CPPATH +'Q3DLoader.cpp',
+CPPATH + 'FindInstancesProcess.cpp',CPPATH +'RawLoader.cpp',
+CPPATH + 'FindInvalidDataProcess.cpp',CPPATH +'RemoveComments.cpp',
+CPPATH + 'FixNormalsStep.cpp',CPPATH +'RemoveRedundantMaterials.cpp',
+CPPATH + 'GenFaceNormalsProcess.cpp',CPPATH +'RemoveVCProcess.cpp',
+CPPATH + 'GenVertexNormalsProcess.cpp',CPPATH +'SceneCombiner.cpp',
+CPPATH + 'HMPLoader.cpp',CPPATH +'ScenePreprocessor.cpp',
+CPPATH + 'IFCCurve.cpp',CPPATH +'SGSpatialSort.cpp',
+CPPATH + 'IFCGeometry.cpp',CPPATH +'SkeletonMeshBuilder.cpp',
+CPPATH + 'IFCLoader.cpp',CPPATH +'SMDLoader.cpp',
+CPPATH + 'IFCMaterial.cpp',CPPATH +'SortByPTypeProcess.cpp',
+CPPATH + 'IFCProfile.cpp',CPPATH +'SpatialSort.cpp',
+CPPATH + 'IFCReaderGen.cpp',CPPATH +'SplitByBoneCountProcess.cpp',
+CPPATH + 'IFCUtil.cpp',CPPATH +'SplitLargeMeshes.cpp',
+CPPATH + 'Importer.cpp',CPPATH +'StandardShapes.cpp',
+CPPATH + 'ImporterRegistry.cpp',CPPATH +'STEPFileReader.cpp',
+CPPATH + 'ImproveCacheLocality.cpp',CPPATH +'STLExporter.cpp',
+CPPATH + 'IRRLoader.cpp',CPPATH +'STLLoader.cpp',
+CPPATH + 'IRRMeshLoader.cpp',CPPATH +'Subdivision.cpp',
+CPPATH + 'IRRShared.cpp',CPPATH +'TargetAnimation.cpp',
+CPPATH + 'JoinVerticesProcess.cpp',CPPATH +'TerragenLoader.cpp',
+CPPATH + 'LimitBoneWeightsProcess.cpp',CPPATH +'TextureTransform.cpp',
+CPPATH + 'LWOAnimation.cpp',CPPATH +'TriangulateProcess.cpp',
+CPPATH + 'LWOBLoader.cpp',CPPATH +'UnrealLoader.cpp',
+CPPATH + 'LWOLoader.cpp',CPPATH +'ValidateDataStructure.cpp',
+CPPATH + 'LWOMaterial.cpp',CPPATH +'VertexTriangleAdjacency.cpp',
+CPPATH + 'LWSLoader.cpp',CPPATH +'XFileImporter.cpp',
+CPPATH + 'M3Importer.cpp',CPPATH +'XFileParser.cpp',
+CPPATH + 'MakeVerboseFormat.cpp',CPPATH +'XGLLoader.cpp',
+CPPATH + 'MaterialSystem.cpp'
+]
+env.Append(CPPATH = [CPPATH,])
+
+env.Library('.bin/assimp',assimp_cc)
