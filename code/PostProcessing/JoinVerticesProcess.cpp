@@ -160,7 +160,7 @@ bool areVerticesEqual(const Vertex &lhs, const Vertex &rhs, bool complex)
 }
 
 template<class XMesh>
-void updateXMeshVertices(XMesh *pMesh, std::vector<Vertex> &uniqueVertices) {
+void updateXMeshVertices(XMesh *pMesh, std::vector<unsigned int> &uniqueVertices) {
     // replace vertex data with the unique data sets
     pMesh->mNumVertices = (unsigned int)uniqueVertices.size();
 
@@ -173,57 +173,63 @@ void updateXMeshVertices(XMesh *pMesh, std::vector<Vertex> &uniqueVertices) {
     // Position, if present (check made for aiAnimMesh)
     if (pMesh->mVertices)
     {
-        delete [] pMesh->mVertices;
-        pMesh->mVertices = new aiVector3D[pMesh->mNumVertices];
+        aiVector3D* pVertices = new aiVector3D[pMesh->mNumVertices];
         for (unsigned int a = 0; a < pMesh->mNumVertices; a++) {
-            pMesh->mVertices[a] = uniqueVertices[a].position;
+            pVertices[a] = pMesh->mVertices[uniqueVertices[a]];
         }
+        delete [] pMesh->mVertices;
+        pMesh->mVertices = pVertices;
     }
 
     // Normals, if present
     if (pMesh->mNormals)
     {
-        delete [] pMesh->mNormals;
-        pMesh->mNormals = new aiVector3D[pMesh->mNumVertices];
-        for( unsigned int a = 0; a < pMesh->mNumVertices; a++) {
-            pMesh->mNormals[a] = uniqueVertices[a].normal;
+        aiVector3D* pNormals = new aiVector3D[pMesh->mNumVertices];
+        for (unsigned int a = 0; a < pMesh->mNumVertices; a++) {
+            pNormals[a] = pMesh->mNormals[uniqueVertices[a]];
         }
+        delete [] pMesh->mNormals;
+        pMesh->mNormals = pNormals;
     }
     // Tangents, if present
     if (pMesh->mTangents)
     {
-        delete [] pMesh->mTangents;
-        pMesh->mTangents = new aiVector3D[pMesh->mNumVertices];
+        aiVector3D* pTangents = new aiVector3D[pMesh->mNumVertices];
         for (unsigned int a = 0; a < pMesh->mNumVertices; a++) {
-            pMesh->mTangents[a] = uniqueVertices[a].tangent;
+            pTangents[a] = pMesh->mTangents[uniqueVertices[a]];
         }
+        delete [] pMesh->mTangents;
+        pMesh->mTangents = pTangents;
     }
     // Bitangents as well
     if (pMesh->mBitangents)
     {
-        delete [] pMesh->mBitangents;
-        pMesh->mBitangents = new aiVector3D[pMesh->mNumVertices];
+        aiVector3D* pBitangents = new aiVector3D[pMesh->mNumVertices];
         for (unsigned int a = 0; a < pMesh->mNumVertices; a++) {
-            pMesh->mBitangents[a] = uniqueVertices[a].bitangent;
+            pBitangents[a] = pMesh->mBitangents[uniqueVertices[a]];
         }
+        delete [] pMesh->mBitangents;
+        pMesh->mBitangents = pBitangents;
     }
     // Vertex colors
     for (unsigned int a = 0; pMesh->HasVertexColors(a); a++)
     {
-        delete [] pMesh->mColors[a];
-        pMesh->mColors[a] = new aiColor4D[pMesh->mNumVertices];
-        for( unsigned int b = 0; b < pMesh->mNumVertices; b++) {
-            pMesh->mColors[a][b] = uniqueVertices[b].colors[a];
+        aiColor4D* pColors = new aiColor4D[pMesh->mNumVertices];
+        for (unsigned int b = 0; b < pMesh->mNumVertices; b++) {
+            pColors[b] = pMesh->mColors[a][uniqueVertices[b]];
         }
+        delete [] pMesh->mColors[a];
+        pMesh->mColors[a] = pColors;
     }
     // Texture coords
     for (unsigned int a = 0; pMesh->HasTextureCoords(a); a++)
     {
-        delete [] pMesh->mTextureCoords[a];
-        pMesh->mTextureCoords[a] = new aiVector3D[pMesh->mNumVertices];
+        aiVector3D* pTextureCoords = new aiVector3D[pMesh->mNumVertices];
         for (unsigned int b = 0; b < pMesh->mNumVertices; b++) {
-            pMesh->mTextureCoords[a][b] = uniqueVertices[b].texcoords[a];
+            pTextureCoords[b] = pMesh->mTextureCoords[a][uniqueVertices[b]];
         }
+        delete [] pMesh->mTextureCoords[a];
+        pMesh->mTextureCoords[a] = pTextureCoords;
     }
 }
 } // namespace
@@ -254,8 +260,7 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
     }
 
     // We'll never have more vertices afterwards.
-    std::vector<Vertex> uniqueVertices;
-    uniqueVertices.reserve( pMesh->mNumVertices);
+    std::vector<unsigned int> uniqueVertices;
 
     // For each vertex the index of the vertex it was replaced by.
     // Since the maximal number of vertices is 2^31-1, the most significand bit can be used to mark
@@ -290,13 +295,38 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
     std::vector<unsigned int> verticesFound;
     verticesFound.reserve(10);
 
+    // Identify the appropriate tolerance value by getting the length of the
+    // smallest edge.  Tolerance is half the smallest edge.
+    double vertexPosTol = std::numeric_limits<double>::max();
+    for (unsigned j = 0; j < pMesh->mNumFaces; j++) {
+      const aiFace &f = pMesh->mFaces[j];
+
+        for (unsigned k = 0; k < f.mNumIndices; k++) {
+            unsigned nextk = k+1;
+            if (k == (f.mNumIndices - 1)) nextk = 0;
+
+            Vertex v0(pMesh, f.mIndices[k]);
+            Vertex v1(pMesh, f.mIndices[nextk]);
+
+            double len = (v0.position - v1.position).SquareLength();
+
+            if ((len > std::numeric_limits<double>::epsilon()) && (len < vertexPosTol))
+                vertexPosTol = len;
+        }
+    }
+    // Use half the shortest edge as the tolerance for merging vertices.
+    // Bound the tolerance above and below by 1x10^-6 and 1x10^-4.
+    vertexPosTol = sqrt(vertexPosTol) / 2.0f;
+    if (vertexPosTol < 1.0e-6f) vertexPosTol = 1.0e-6f;
+    if (vertexPosTol > 1.0e-4f) vertexPosTol = 1.0e-4f;
+
     // Run an optimized code path if we don't have multiple UVs or vertex colors.
     // This should yield false in more than 99% of all imports ...
     const bool complex = ( pMesh->GetNumColorChannels() > 0 || pMesh->GetNumUVChannels() > 1);
     const bool hasAnimMeshes = pMesh->mNumAnimMeshes > 0;
 
     // We'll never have more vertices afterwards.
-    std::vector<std::vector<Vertex>> uniqueAnimatedVertices;
+    std::vector<std::vector<unsigned int>> uniqueAnimatedVertices;
     if (hasAnimMeshes) {
         uniqueAnimatedVertices.resize(pMesh->mNumAnimMeshes);
         for (unsigned int animMeshIndex = 0; animMeshIndex < pMesh->mNumAnimMeshes; animMeshIndex++) {
@@ -314,19 +344,24 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
         Vertex v(pMesh,a);
 
         // collect all vertices that are close enough to the given position
-        vertexFinder->FindIdenticalPositions( v.position, verticesFound);
+        vertexFinder->FindIdenticalPositions(v.position, verticesFound);
+        if (!verticesFound.size()) {
+            vertexFinder->FindPositions(v.position, vertexPosTol, verticesFound);
+        }
+
         unsigned int matchIndex = 0xffffffff;
 
         // check all unique vertices close to the position if this vertex is already present among them
         for( unsigned int b = 0; b < verticesFound.size(); b++) {
             const unsigned int vidx = verticesFound[b];
             const unsigned int uidx = replaceIndex[ vidx];
-            if( uidx & 0x80000000)
+            if( uidx & 0x80000000) {
                 continue;
+            }
 
-            const Vertex& uv = uniqueVertices[ uidx];
+            const unsigned int pos = uniqueVertices[uidx];
 
-            if (!areVerticesEqual(v, uv, complex)) {
+            if (!areVerticesEqual(v, Vertex(pMesh, pos), complex)) {
                 continue;
             }
 
@@ -335,9 +370,9 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
                 // NOTE: not doing this totaly breaks anim meshes as they don't have their own faces (they use pMesh->mFaces)
                 bool breaksAnimMesh = false;
                 for (unsigned int animMeshIndex = 0; animMeshIndex < pMesh->mNumAnimMeshes; animMeshIndex++) {
-                    const Vertex& animatedUV = uniqueAnimatedVertices[animMeshIndex][ uidx];
+                    const unsigned int animatedUVPos = uniqueAnimatedVertices[animMeshIndex][uidx];
                     Vertex aniMeshVertex(pMesh->mAnimMeshes[animMeshIndex], a);
-                    if (!areVerticesEqual(aniMeshVertex, animatedUV, complex)) {
+                    if (!areVerticesEqual(aniMeshVertex, Vertex(pMesh->mAnimMeshes[animMeshIndex], animatedUVPos), complex)) {
                         breaksAnimMesh = true;
                         break;
                     }
@@ -362,11 +397,11 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
         {
             // no unique vertex matches it up to now -> so add it
             replaceIndex[a] = (unsigned int)uniqueVertices.size();
-            uniqueVertices.push_back( v);
+            uniqueVertices.push_back(a);
             if (hasAnimMeshes) {
                 for (unsigned int animMeshIndex = 0; animMeshIndex < pMesh->mNumAnimMeshes; animMeshIndex++) {
                     Vertex aniMeshVertex(pMesh->mAnimMeshes[animMeshIndex], a);
-                    uniqueAnimatedVertices[animMeshIndex].push_back(aniMeshVertex);
+                    uniqueAnimatedVertices[animMeshIndex].push_back(a);
                 }
             }
         }
