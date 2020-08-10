@@ -292,8 +292,35 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
     }
 
     // Again, better waste some bytes than a realloc ...
-    std::vector<unsigned int> verticesFound;
-    verticesFound.reserve(10);
+    std::vector<unsigned int> identicalVerticesFound;
+    identicalVerticesFound.reserve(10);
+    std::vector<unsigned int> closeVerticesFound;
+    closeVerticesFound.reserve(10);
+
+    // Identify the appropriate tolerance value by getting the length of the
+    // smallest edge.  Tolerance is half the smallest edge.
+    double vertexPosTol = std::numeric_limits<double>::max();
+    for (unsigned j = 0; j < pMesh->mNumFaces; j++) {
+      const aiFace &f = pMesh->mFaces[j];
+
+        for (unsigned k = 0; k < f.mNumIndices; k++) {
+            unsigned nextk = k+1;
+            if (k == (f.mNumIndices - 1)) nextk = 0;
+
+            Vertex v0(pMesh, f.mIndices[k]);
+            Vertex v1(pMesh, f.mIndices[nextk]);
+
+            double len = (v0.position - v1.position).SquareLength();
+
+            if ((len > std::numeric_limits<double>::epsilon()) && (len < vertexPosTol))
+                vertexPosTol = len;
+        }
+    }
+    // Use half the shortest edge as the tolerance for merging vertices.
+    // Bound the tolerance above and below by 1x10^-6 and 1x10^-4.
+    vertexPosTol = sqrt(vertexPosTol) / 2.0f;
+    if (vertexPosTol < 1.0e-6f) vertexPosTol = 1.0e-6f;
+    if (vertexPosTol > 1.0e-4f) vertexPosTol = 1.0e-4f;
 
     // Run an optimized code path if we don't have multiple UVs or vertex colors.
     // This should yield false in more than 99% of all imports ...
@@ -319,12 +346,18 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
         Vertex v(pMesh,a);
 
         // collect all vertices that are close enough to the given position
-        vertexFinder->FindIdenticalPositions( v.position, verticesFound);
+        vertexFinder->FindIdenticalPositions(v.position, identicalVerticesFound);
+        std::vector<unsigned int> * verticesFound = & identicalVerticesFound;
+        if (!identicalVerticesFound.size()) {
+            vertexFinder->FindPositions(v.position, vertexPosTol, closeVerticesFound);
+            verticesFound = &closeVerticesFound;
+        }
+
         unsigned int matchIndex = 0xffffffff;
 
         // check all unique vertices close to the position if this vertex is already present among them
-        for( unsigned int b = 0; b < verticesFound.size(); b++) {
-            const unsigned int vidx = verticesFound[b];
+        for( unsigned int b = 0; b < verticesFound->size(); b++) {
+            const unsigned int vidx = (*verticesFound)[b];
             const unsigned int uidx = replaceIndex[ vidx];
             if( uidx & 0x80000000)
                 continue;
