@@ -292,10 +292,8 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
     }
 
     // Again, better waste some bytes than a realloc ...
-    std::vector<unsigned int> identicalVerticesFound;
-    identicalVerticesFound.reserve(10);
-    std::vector<unsigned int> closeVerticesFound;
-    closeVerticesFound.reserve(10);
+    std::vector<unsigned int> verticesFound;
+    verticesFound.reserve(10);
 
     // Identify the appropriate tolerance value by getting the length of the
     // smallest edge.  Tolerance is half the smallest edge.
@@ -346,21 +344,20 @@ int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
         Vertex v(pMesh,a);
 
         // collect all vertices that are close enough to the given position
-        vertexFinder->FindIdenticalPositions(v.position, identicalVerticesFound);
-        std::vector<unsigned int> * verticesFound = & identicalVerticesFound;
-        if (!identicalVerticesFound.size()) {
-            vertexFinder->FindPositions(v.position, vertexPosTol, closeVerticesFound);
-            verticesFound = &closeVerticesFound;
+        vertexFinder->FindIdenticalPositions(v.position, verticesFound);
+        if (!verticesFound.size()) {
+            vertexFinder->FindPositions(v.position, vertexPosTol, verticesFound);
         }
 
         unsigned int matchIndex = 0xffffffff;
 
         // check all unique vertices close to the position if this vertex is already present among them
-        for( unsigned int b = 0; b < verticesFound->size(); b++) {
-            const unsigned int vidx = (*verticesFound)[b];
+        for( unsigned int b = 0; b < verticesFound.size(); b++) {
+            const unsigned int vidx = verticesFound[b];
             const unsigned int uidx = replaceIndex[ vidx];
-            if( uidx & 0x80000000)
+            if( uidx & 0x80000000) {
                 continue;
+            }
 
             const unsigned int pos = uniqueVertices[uidx];
 

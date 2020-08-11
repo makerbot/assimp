@@ -45,6 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <assimp/SpatialSort.h>
 #include <assimp/ai_assert.h>
+#include <type_traits>
 
 using namespace Assimp;
 
@@ -183,7 +184,11 @@ namespace {
     //  and then use them to work with ULPs (Units in the Last Place, for high-precision
     //  computations) or to compare them (integer comparisons are faster than floating-point
     //  comparisons on many platforms).
-    typedef ai_int BinFloat;
+    typedef std::conditional<sizeof(short int)==sizeof(float), short int,
+            std::conditional<sizeof(int)==sizeof(float), int,
+            std::conditional<sizeof(long int)==sizeof(float),
+            long int, long long int>::type>::type>::type BinFloat;
+    static const BinFloat BIN_FLOAT_MSB = BinFloat(1) << (CHAR_BIT * sizeof(BinFloat) -1);
 
     // --------------------------------------------------------------------------------------------
     // Converts the bit pattern of a floating-point number to its signed integer representation.
@@ -220,16 +225,26 @@ namespace {
         // See http://en.wikipedia.org/wiki/Signed_number_representations.
 
         // Two's complement?
-        if( (-42 == (~42 + 1)) && (binValue & 0x80000000))
-            return BinFloat(1 << (CHAR_BIT * sizeof(BinFloat) - 1)) - binValue;
+        if( (-42 == (~42 + 1))) {
+            if(binValue & BIN_FLOAT_MSB)
+                return BinFloat(1 << (CHAR_BIT * sizeof(BinFloat) - 1)) - binValue;
+            else
+                return binValue;
         // One's complement?
-        else if ( (-42 == ~42) && (binValue & 0x80000000))
-            return BinFloat(-0) - binValue;
+        } else if( (-42 == ~42)) {
+            if(binValue & BIN_FLOAT_MSB)
+                return BinFloat(-0) - binValue;
+            else
+                return binValue;
         // Sign-magnitude?
-        else if( (-42 == (42 | (-0))) && (binValue & 0x80000000)) // -0 = 1000... binary
+        } else if( (-42 == (42 | (-0)))) {
+            if(binValue & BIN_FLOAT_MSB) // -0 = 1000... binary
+                return binValue;
+            else
+                return binValue;
+        } else {
             return binValue;
-        else
-            return binValue;
+        }
     }
 
 } // namespace
