@@ -262,7 +262,8 @@ set(libassimp_sources
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_SOURCE_DIR}
-    "../contrib/zlib"
+    "../contrib/zlib/"
+    "../contrib/irrXML/"
     )
 
 find_package(FopenHack REQUIRED)
