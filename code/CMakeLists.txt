@@ -12,8 +12,8 @@ set(libassimp_sources
     # AMF/AMFImporter_Postprocess.cpp
     # ASE/ASELoader.cpp
     # ASE/ASEParser.cpp
-    # Assbin/AssbinExporter.cpp
-    # Assbin/AssbinLoader.cpp
+    Assbin/AssbinExporter.cpp
+    Assbin/AssbinLoader.cpp
     # Assjson/json_exporter.cpp
     # Assjson/mesh_splitter.cpp
     # Assxml/AssxmlExporter.cpp
@@ -27,8 +27,8 @@ set(libassimp_sources
     # Blender/BlenderScene.cpp
     # Blender/BlenderTessellator.cpp
     # C4D/C4DImporter.cpp
-    # CApi/AssimpCExport.cpp
-    # CApi/CInterfaceIOWrapper.cpp
+    CApi/AssimpCExport.cpp
+    CApi/CInterfaceIOWrapper.cpp
     # COB/COBLoader.cpp
     # CSM/CSMLoader.cpp
     # Collada/ColladaExporter.cpp
@@ -56,7 +56,7 @@ set(libassimp_sources
     # Common/StandardShapes.cpp
     # Common/Subdivision.cpp
     # Common/TargetAnimation.cpp
-    # Common/Version.cpp
+    Common/Version.cpp
     Common/VertexTriangleAdjacency.cpp
     Common/ZipArchiveIOSystem.cpp
     Common/scene.cpp
@@ -255,6 +255,17 @@ set(libassimp_sources
         "\"-DASSIMP_BUILD_NO_IFC_IMPORTER\""
         "\"-DASSIMP_BUILD_NO_M3_IMPORTER\""
         "\"-DASSIMP_BUILD_NO_XGL_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_C4D_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_MMD_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_SIB_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_D3M_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_GLTF_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_OPENGEX_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_STEP_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_FBX_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_X3D_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_3MF_IMPORTER\""
+        "\"-DASSIMP_BUILD_NO_AMF_IMPORTER\""
         "\"-DASSIMP_BUILD_BOOST_WORKAROUND\""
         "\"-D_CRT_SECURE_NO_WARNINGS\"")
     add_definitions(${LIMITEDASSIMPDEFINES})
@@ -262,7 +273,8 @@ set(libassimp_sources
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_SOURCE_DIR}
-    "../contrib/zlib"
+    "../contrib/zlib/"
+    "../contrib/irrXML/"
     )
 
 find_package(FopenHack REQUIRED)
@@ -283,3 +295,4 @@ endif()
 
 #export_api(assimp ASSIMP_API)
 export_and_install_targets(TARGETS assimp)
+generate_and_install_config(NAME Assimp)

@@ -1,3 +1,4 @@
+#include <iostream>
 /*
 ---------------------------------------------------------------------------
 Open Asset Import Library (assimp)
@@ -238,8 +239,9 @@ void updateXMeshVertices(XMesh *pMesh, std::vector<unsigned int> &uniqueVertices
 // Unites identical vertices in the given mesh
 int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
 {
+  std::cout << "using this " << std::endl;
     static_assert( AI_MAX_NUMBER_OF_COLOR_SETS    == 8, "AI_MAX_NUMBER_OF_COLOR_SETS    == 8");
-	static_assert( AI_MAX_NUMBER_OF_TEXTURECOORDS == 8, "AI_MAX_NUMBER_OF_TEXTURECOORDS == 8");
+    static_assert( AI_MAX_NUMBER_OF_TEXTURECOORDS == 8, "AI_MAX_NUMBER_OF_TEXTURECOORDS == 8");
 
     // Return early if we don't have any positions
     if (!pMesh->HasPositions() || !pMesh->HasFaces()) {

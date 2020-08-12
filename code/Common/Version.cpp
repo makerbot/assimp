@@ -47,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ScenePrivate.h"
 
 static const unsigned int MajorVersion = 5;
-static const unsigned int MinorVersion = 0;
+static const unsigned int MinorVersion = 1;
 
 // --------------------------------------------------------------------------------
 // Legal information string - don't remove this.
@@ -104,16 +104,13 @@ ASSIMP_API unsigned int aiGetCompileFlags ()    {
     return flags;
 }
 
-// include current build revision, which is even updated from time to time -- :-)
-#include "revision.h"
-
 // ------------------------------------------------------------------------------------------------
 ASSIMP_API unsigned int aiGetVersionRevision() {
-    return GitVersion;
+    return 0;
 }
 
 ASSIMP_API const char *aiGetBranchName() {
-    return GitBranch;
+    return "";
 }
 
 // ------------------------------------------------------------------------------------------------
