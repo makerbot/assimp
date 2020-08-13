@@ -10,7 +10,15 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-fvisibility=hidden)
 endif()
 
-include_directories(include)
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_LIST_DIR}/include/assimp/config.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/include/assimp/config.h
+)
+include_directories(
+  include
+  ${CMAKE_CURRENT_BINARY_DIR}/include
+)
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 set(ENABLE_BOOST_WORKAROUND OFF CACHE BOOL
     "If a simple implementation of the used Boost functions is used.
