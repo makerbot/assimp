@@ -215,6 +215,7 @@ set(libassimp_sources
     ${PROJECT_SOURCE_DIR}/contrib/zlib/inflate.c
     ${PROJECT_SOURCE_DIR}/contrib/zlib/inftrees.c
     ${PROJECT_SOURCE_DIR}/contrib/zlib/trees.c
+    ${PROJECT_SOURCE_DIR}/contrib/zlib/uncompr.c
     ${PROJECT_SOURCE_DIR}/contrib/zlib/zutil.c)
 
     set(assim_src ${libassimp_sources})
@@ -292,6 +293,10 @@ if(UNZIP_FOUND)
 else()
     include_directories("../contrib/unzip")
 endif()
+
+install(
+    DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+    DESTINATION ${HEADER_INSTALL_DIR})
 
 #export_api(assimp ASSIMP_API)
 export_and_install_targets(TARGETS assimp)
