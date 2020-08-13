@@ -59,7 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/importerdesc.h>
 #include <memory>
 
-#include "zlib.h"
+#include "contrib/zlib/zlib.h"
 
 using namespace Assimp;
 

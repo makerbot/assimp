@@ -10,10 +10,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-fvisibility=hidden)
 endif()
 
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_LIST_DIR}/include/assimp/config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/assimp/config.h
-)
 include_directories(
   include
   ${CMAKE_CURRENT_BINARY_DIR}/include
