@@ -26,7 +26,6 @@ assimp.pc
 assimp.aps
 revision.h
 contrib/zlib/zlib.pc
-include/assimp/config.h
 unit.vcxproj.user
 
 # CMake
