@@ -207,6 +207,9 @@ set(libassimp_sources
     ${PROJECT_SOURCE_DIR}/contrib/poly2tri/poly2tri/sweep/sweep.cc
     ${PROJECT_SOURCE_DIR}/contrib/poly2tri/poly2tri/common/shapes.cc
 
+    ${PROJECT_SOURCE_DIR}/contrib/unzip/unzip.c
+    ${PROJECT_SOURCE_DIR}/contrib/unzip/ioapi.c
+
     ${PROJECT_SOURCE_DIR}/contrib/zlib/adler32.c
     ${PROJECT_SOURCE_DIR}/contrib/zlib/compress.c
     ${PROJECT_SOURCE_DIR}/contrib/zlib/crc32.c
@@ -277,24 +280,16 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     "../contrib/zlib/"
     "../contrib/irrXML/"
+    "../contrib/unzip"
     )
 
 find_package(FopenHack REQUIRED)
 
-# add_library(assimp STATIC ${assim_src})
 add_library(assimp SHARED ${assim_src})
 
 target_link_libraries(assimp FopenHack::fopen_hack)
 
 use_standard_flags(assimp)
-
-# assimp can #include "unzip.h"
-if(UNZIP_FOUND)
-    include_directories(${UNZIP_INCLUDE_DIRS})
-    target_link_libraries(assimp ${UNZIP_LIBRARIES})
-else()
-    include_directories("../contrib/unzip")
-endif()
 
 install(
     DIRECTORY ${PROJECT_SOURCE_DIR}/include/
