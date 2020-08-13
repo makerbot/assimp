@@ -56,7 +56,7 @@ set(libassimp_sources
     # Common/StandardShapes.cpp
     # Common/Subdivision.cpp
     # Common/TargetAnimation.cpp
-    # Common/Version.cpp
+    Common/Version.cpp
     Common/VertexTriangleAdjacency.cpp
     Common/ZipArchiveIOSystem.cpp
     Common/scene.cpp
@@ -279,7 +279,7 @@ include_directories(
 
 find_package(FopenHack REQUIRED)
 
-add_library(assimp ${assim_src})
+add_library(assimp STATIC ${assim_src})
 
 target_link_libraries(assimp FopenHack::fopen_hack)
 
@@ -295,4 +295,4 @@ endif()
 
 #export_api(assimp ASSIMP_API)
 export_and_install_targets(TARGETS assimp)
-generate_and_install_config(NAME assimp)
+generate_and_install_config(NAME Assimp)
