@@ -67,7 +67,11 @@ using namespace Assimp;
 // Constructor to be privately used by Importer
 BaseImporter::BaseImporter() AI_NO_EXCEPT
 : m_progress() {
-    // nothing to do here
+    importerUnits[ImporterUnits::M] = 1;
+    importerUnits[ImporterUnits::CM] = 0.01;
+    importerUnits[ImporterUnits::MM] = 0.001;
+    importerUnits[ImporterUnits::INCHES] = 0.0254;
+    importerUnits[ImporterUnits::FEET] = 0.304;
 }
 
 // ------------------------------------------------------------------------------------------------
