@@ -1,7 +1,7 @@
 [
   {
     "project": "Toolchain-Release",
-    "revision": "develop",
+    "revision": "SLIC-2634-wip",
     "version": "^4.6"
   },
   {
