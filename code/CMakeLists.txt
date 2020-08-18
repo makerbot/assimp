@@ -295,6 +295,9 @@ install(
     DIRECTORY ${PROJECT_SOURCE_DIR}/include/
     DESTINATION ${HEADER_INSTALL_DIR})
 
-#export_api(assimp ASSIMP_API)
+export_api(assimp ASSIMP_API)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    export_api(assimp ASSIMP_API_WINONLY)
+endif()
 export_and_install_targets(TARGETS assimp)
 generate_and_install_config(NAME Assimp)

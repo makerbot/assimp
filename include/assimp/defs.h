@@ -127,28 +127,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //////////////////////////////////////////////////////////////////////////
 
 #ifdef _MSC_VER
-#   undef ASSIMP_API
-
-    //////////////////////////////////////////////////////////////////////////
-    /* Define 'ASSIMP_BUILD_DLL_EXPORT' to build a DLL of the library */
-    //////////////////////////////////////////////////////////////////////////
-#   ifdef ASSIMP_BUILD_DLL_EXPORT
-#       define ASSIMP_API __declspec(dllexport)
-#       define ASSIMP_API_WINONLY __declspec(dllexport)
-#       pragma warning (disable : 4251)
-
-    //////////////////////////////////////////////////////////////////////////
-    /* Define 'ASSIMP_DLL' before including Assimp to link to ASSIMP in
-     * an external DLL under Windows. Default is static linkage. */
-    //////////////////////////////////////////////////////////////////////////
-#   elif (defined ASSIMP_DLL)
-#       define ASSIMP_API __declspec(dllimport)
-#       define ASSIMP_API_WINONLY __declspec(dllimport)
-#   else
-#       define ASSIMP_API
-#       define ASSIMP_API_WINONLY
-#   endif
-
     /* Force the compiler to inline a function, if possible
      */
 #   define AI_FORCE_INLINE __forceinline
@@ -164,9 +142,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #else
 
 #   define AI_WONT_RETURN
-
-#   define ASSIMP_API __attribute__ ((visibility("default")))
-#   define ASSIMP_API_WINONLY
 #   define AI_FORCE_INLINE inline
 #endif // (defined _MSC_VER)
 
