@@ -1,4 +1,3 @@
-#include <iostream>
 /*
 ---------------------------------------------------------------------------
 Open Asset Import Library (assimp)
@@ -129,7 +128,7 @@ bool areVerticesEqual(const Vertex &lhs, const Vertex &rhs, bool complex)
     // In this case they're initialized to 0 so the comparison succeeds.
     // By this method the non-present attributes are effectively ignored in the comparison.
     if ((lhs.normal - rhs.normal).SquareLength() > squareEpsilon) {
-        return false;
+        //return false;
     }
 
     if ((lhs.texcoords[0] - rhs.texcoords[0]).SquareLength() > squareEpsilon) {
@@ -239,7 +238,6 @@ void updateXMeshVertices(XMesh *pMesh, std::vector<unsigned int> &uniqueVertices
 // Unites identical vertices in the given mesh
 int JoinVerticesProcess::ProcessMesh( aiMesh* pMesh, unsigned int meshIndex)
 {
-  std::cout << "using this " << std::endl;
     static_assert( AI_MAX_NUMBER_OF_COLOR_SETS    == 8, "AI_MAX_NUMBER_OF_COLOR_SETS    == 8");
     static_assert( AI_MAX_NUMBER_OF_TEXTURECOORDS == 8, "AI_MAX_NUMBER_OF_TEXTURECOORDS == 8");
 
