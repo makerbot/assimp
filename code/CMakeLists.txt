@@ -275,6 +275,10 @@ set(libassimp_sources
         "\"-D_CRT_SECURE_NO_WARNINGS\"")
     add_definitions(${LIMITEDASSIMPDEFINES})
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_definitions("\"-DASSIMP_BUILD_DLL_EXPORT\"")
+endif()
+
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -295,6 +299,5 @@ install(
     DIRECTORY ${PROJECT_SOURCE_DIR}/include/
     DESTINATION ${HEADER_INSTALL_DIR})
 
-#export_api(assimp ASSIMP_API)
 export_and_install_targets(TARGETS assimp)
 generate_and_install_config(NAME Assimp)
