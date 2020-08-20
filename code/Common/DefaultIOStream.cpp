@@ -50,6 +50,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "fopen_hack/fopen_hack.h"
+
 using namespace Assimp;
 
 // ----------------------------------------------------------------------------------
@@ -125,7 +127,9 @@ size_t DefaultIOStream::FileSize() const
 #if defined _WIN32 && (!defined __GNUC__ || __MSVCRT_VERSION__ >= 0x0601)
         struct __stat64 fileStat;
         //using fileno + fstat avoids having to handle the filename
-        int err = _fstat64(  _fileno(mFile), &fileStat );
+        //int err = _fstat64(  _fileno(mFile), &fileStat );
+        const std::wstring wide(widen(mFilename));
+        int err = _wstat64(wide.c_str(), &fileStat);
         if (0 != err)
             return 0;
         mCachedSize = (size_t) (fileStat.st_size);

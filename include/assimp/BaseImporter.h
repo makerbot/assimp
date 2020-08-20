@@ -194,13 +194,7 @@ public:
      * if you need another measurment unit add it below.
      * it's currently defined in assimp that we prefer meters.
      * */
-    std::map<ImporterUnits, double> importerUnits = {
-        {ImporterUnits::M, 1},
-        {ImporterUnits::CM, 0.01},
-        {ImporterUnits::MM, 0.001},
-        {ImporterUnits::INCHES, 0.0254},
-        {ImporterUnits::FEET, 0.3048}
-    };
+    std::map<ImporterUnits, double> importerUnits;
 
     virtual void SetApplicationUnits( const ImporterUnits& unit )
     {

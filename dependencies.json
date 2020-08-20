@@ -1,0 +1,12 @@
+[
+  {
+    "project": "Toolchain-Release",
+    "revision": "SLIC-2634-wip",
+    "version": "^4.6"
+  },
+  {
+    "project": "fopen_hack",
+    "revision": "master",
+    "version": "1.*"
+  }
+]

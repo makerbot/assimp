@@ -59,6 +59,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <windows.h>
 #endif
 
+#include "fopen_hack/fopen_hack.h"
+
 using namespace Assimp;
 
 #ifdef _WIN32
@@ -91,7 +93,7 @@ bool DefaultIOSystem::Exists(const char* pFile) const
         return false;
     }
 #else
-    FILE* file = ::fopen(pFile, "rb");
+    FILE* file = hacked_fopen(pFile, "rb");
     if (!file)
         return false;
 
@@ -110,7 +112,7 @@ IOStream* DefaultIOSystem::Open(const char* strFile, const char* strMode)
 #ifdef _WIN32
     file = ::_wfopen(Utf8ToWide(strFile).c_str(), Utf8ToWide(strMode).c_str());
 #else
-    file = ::fopen(strFile, strMode);
+    file = hacked_fopen(strFile, strMode);
 #endif
     if (!file)
         return nullptr;
